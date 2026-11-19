@@ -43,22 +43,22 @@ flowchart LR
 
 ## Decisões de implementação
 
-Registre seu plano aqui antes de editar o código.
+- **Camada de apresentação:** manter componentes React responsáveis pela renderização e pelo estado de carregamento, vazio e erro; consumir a API somente pelo cliente compartilhado e por caminhos relativos `/api`.
+- **Camada de lógica:** manter rotas Express finas e concentrar validações e regras de negócio nos serviços; responder com 4xx para entradas inválidas ou referências inexistentes, sem deixar erros de conversão virarem 500.
+- **Camada de dados:** declarar campos obrigatórios, referências e padrões nos modelos Mongoose. Popular dados de demonstração pelo seed da aplicação, de forma idempotente e sem apagar registros não relacionados.
+- **Registro de atividades:** validar tipo, minutos e formato e existência dos IDs de pessoa e equipe; calcular pontos e data no backend e persistir as referências e os valores recebidos.
+- **Gerenciamento de equipes:** exigir nome e mascote, manter integrantes como referências de pessoas e retornar equipes e integrantes no formato previsto pelo contrato.
+- **Placar:** somar os pontos das atividades por equipe, ordenar do maior total para o menor e atribuir posições sequenciais a partir de 1.
+- **Sugestões de treino:** localizar a pessoa pelo e-mail, considerar sua meta e atividade recente para ordenar sugestões e explicar o foco recomendado; retornar 4xx quando não houver pessoa correspondente.
 
-- Decisão da camada de apresentação:
-- Decisão da camada de lógica:
-- Decisão da camada de dados:
-- Abordagem para registro de atividades:
-- Abordagem para gerenciamento de equipes:
-- Abordagem para o placar:
-- Abordagem para sugestões de treino:
+Ordem mínima segura: validar modelos e seed; implementar e testar os serviços da API; conectar as telas ao contrato e cobrir seus estados; por fim, executar as compilações das duas camadas.
 
 ## Plano de testes
 
-Registre os comandos executados e o significado de cada falha.
+Resultados executados no scaffold atual:
 
-- Testes da camada de dados: `npm run test:data --prefix octofit-tracker/backend`
-- Testes da API: `npm run test:api --prefix octofit-tracker/backend`
-- Testes do frontend: `npm test --prefix octofit-tracker/frontend`
-- Compilação do backend: `npm run build --prefix octofit-tracker/backend`
-- Compilação do frontend: `npm run build --prefix octofit-tracker/frontend`
+- **Dados:** `npm run test:data --prefix octofit-tracker/backend` — falhou: 4 de 5 testes. Os modelos não sinalizam campos obrigatórios de pessoas, equipes, atividades e treinos; o teste de seed passou, incluindo idempotência e preservação de dados não relacionados.
+- **API:** `npm run test:api --prefix octofit-tracker/backend` — falhou: 4 de 4 testes. As criações retornam `501` em vez de validar entradas e persistir; o placar está vazio; a sugestão de treino não inclui o motivo esperado.
+- **Frontend:** `npm test --prefix octofit-tracker/frontend` — falhou: 15 de 15 testes. As telas não exibem os dados esperados nem solicitam sugestões para Mona; nas quatro rotas, carregamento, estado vazio e erro não atendem ao contrato.
+- **Compilação do backend:** `npm run build --prefix octofit-tracker/backend` — passou (`tsc --noEmit`).
+- **Compilação do frontend:** `npm run build --prefix octofit-tracker/frontend` — passou (TypeScript e `vite build`).
